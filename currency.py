@@ -36,4 +36,25 @@ def after_space(s):
     Precondition: s is a string with at least one space in it
     """
     result = introcs.find_str(s, ' ') + 1
-    return s[result:]    
+    return s[result:]
+
+
+def first_inside_quotes(s):
+    """
+    Returns the first substring of s between two (double) quote characters
+
+    Note that the double quotes must be part of the string.  So "Hello World" is a
+    precondition violation, since there are no double quotes inside the string.
+
+    Example: first_inside_quotes('A "B C" D') returns 'B C'
+    Example: first_inside_quotes('A "B C" D "E F" G') returns 'B C', because it only
+    picks the first such substring.
+
+    Parameter s: a string to search
+    Precondition: s is a string with at least two (double) quote characters inside
+    """
+    begin_str = introcs.find_str(s, '"') + 1
+    end_str = introcs.find_str(s,'"',begin_str, len(s))
+    result = s[begin_str:end_str]
+    print(result)
+    return result
