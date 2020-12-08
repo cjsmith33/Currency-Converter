@@ -24,3 +24,16 @@ def before_space(s):
     """
     result = introcs.find_str(s,' ')
     return s[:result]
+
+
+def after_space(s):
+    """
+    Returns the substring of s after the first space
+
+    Example: after_space('Hello World') returns 'World'
+
+    Parameter s: the string to slice
+    Precondition: s is a string with at least one space in it
+    """
+    result = introcs.find_str(s, ' ') + 1
+    return s[result:]    

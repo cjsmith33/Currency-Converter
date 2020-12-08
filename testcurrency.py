@@ -14,12 +14,16 @@ import currency
 def test_before_space():
     """Test procedure for before_space"""
     print("Testing before_space")
+
     result = currency.before_space("0.863569 Euros")
     introcs.assert_equals('0.863569',result)
+
     result = currency.before_space("Hello  Euros")
     introcs.assert_equals('Hello',result)
+
     result = currency.before_space("0.863569 Euros ")
     introcs.assert_equals('0.863569',result)
+
     result = currency.before_space(" 0.863569")
     introcs.assert_equals('',result)
 
@@ -27,6 +31,18 @@ def test_before_space():
 def test_after_space():
     """Test procedure for after_space"""
     print("Testing after_space")
+
+    result = currency.after_space("0.863569 Euros")
+    introcs.assert_equals('Euros',result)
+
+    result = currency.after_space("Hello  Euros")
+    introcs.assert_equals(' Euros',result)
+
+    result = currency.after_space("Hello Euros ")
+    introcs.assert_equals('Euros ',result)
+
+    result = currency.after_space("HelloEuros ")
+    introcs.assert_equals('',result) 
 
 
 def test_first_inside_quotes():
