@@ -9,7 +9,18 @@ Author: Charles Smith
 Date:   03 December 2020
 """
 
-
 import introcs
 
 APIKEY = ''
+
+def before_space(s):
+    """
+    Returns the substring of s up to, but not including, the first space.
+
+    Example: before_space('Hello World') returns 'Hello'
+
+    Parameter s: the string to slice
+    Precondition: s is a string with at least one space in it
+    """
+    result = introcs.find_str(s,' ')
+    return s[:result]
