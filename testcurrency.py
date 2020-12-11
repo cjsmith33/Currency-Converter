@@ -42,22 +42,55 @@ def test_after_space():
     introcs.assert_equals('Euros ',result)
 
     result = currency.after_space("HelloEuros ")
-    introcs.assert_equals('',result) 
+    introcs.assert_equals('',result)
 
 
 def test_first_inside_quotes():
     """Test procedure for first_inside_quotes"""
     print("Testing first_inside_quotes")
 
+    result = currency.first_inside_quotes('A "B C" D')
+    introcs.assert_equals('B C',result)
+
+    result = currency.first_inside_quotes('A "B C" D "E F" G')
+    introcs.assert_equals('B C',result)
+
+    result = currency.first_inside_quotes("'AB' 'BC' \"E\'F\"")
+    introcs.assert_equals('E\'F',result)
+
 
 def test_get_src():
     """Test procedure for get_src"""
     print("Testing get_src")
 
+    result = currency.get_src('{"success": true, "src": "2 United States Dollars", "dst": "1.772814 Euros", "error": ""}')
+    introcs.assert_equals('2 United States Dollars',result)
+
+    result = currency.get_src('{"success":false,"src":"","dst":"","error":"Source currency code is invalid."}')
+    introcs.assert_equals('',result)
+
+    result = currency.get_src('{"success":true, "src":"2 United States Dollars", "dst":"1.772814 Euros", "error":""}')
+    introcs.assert_equals('2 United States Dollars',result)
+
+    result = currency.get_src('{"success":false,"src":  "","dst":"","error":"Source currency code is invalid."}')
+    introcs.assert_equals('',result)
+
 
 def test_get_dst():
     """Test procedure for get_dst"""
     print("Testing get_dst")
+
+    result = currency.get_dst('{"success": true, "src": "2 United States Dollars", "dst": "1.772814 Euros", "error": ""}')
+    introcs.assert_equals('1.772814 Euros',result)
+
+    result = currency.get_dst('{"success":false,"src":"","dst":  "","error":"Source currency code is invalid."}')
+    introcs.assert_equals('',result)
+
+    result = currency.get_dst('{"success":true, "src":"2 United States Dollars", "dst":"1.772814 Euros", "error":""}')
+    introcs.assert_equals('1.772814 Euros',result)
+
+    result = currency.get_dst('{"success":false,"src":  "","dst":"","error":"Source currency code is invalid."}')
+    introcs.assert_equals('',result)
 
 
 def test_has_error():
