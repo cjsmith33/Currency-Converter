@@ -97,10 +97,36 @@ def test_has_error():
     """Test procedure for has_error"""
     print("Testing has_error")
 
+    result = currency.has_error('{"success":false,"src":"","dst":"","error":"Source currency code is invalid."}')
+    introcs.assert_true(result)
+
+    result = currency.has_error('{"success":false,"src":"","dst":"","error":  "Source currency code is invalid."}')
+    introcs.assert_true(result)
+
+    result = currency.has_error('{"success": true, "src": "2 United States Dollars", "dst": "1.772814 Euros", "error":""}')
+    introcs.assert_false(result)
+
+    result = currency.has_error('{"success": true, "src": "2 United States Dollars", "dst": "1.772814 Euros", "error": ""}')
+    introcs.assert_false(result)
+
 
 def test_service_response():
     """Test procedure for service_response"""
     print("Testing service_response")
+    #service_response(src, dst, amt)
+
+    result = currency.service_response('USD','AED', 30)
+    introcs.assert_equals('{"success": true, "src": "30.0 United States Dollars", "dst": "110.19288 United Arab Emirates Dirhams", "error": ""}',result)
+
+    result = currency.service_response('USD','AD', 30)
+    introcs.assert_equals('{"success": false, "src": "", "dst": "", "error": "The rate for currency AD is not present."}',result)
+
+    result = currency.service_response('UD','AED', 30)
+    introcs.assert_equals('{"success": false, "src": "", "dst": "", "error": "The rate for currency UD is not present."}',result)
+
+    result = currency.service_response('USD','AED', -30)
+    introcs.assert_equals('{"success": true, "src": "-30.0 United States Dollars", "dst": "-110.19288 United Arab Emirates Dirhams", "error": ""}',result)
+
 
 
 def test_iscurrency():
