@@ -9,3 +9,11 @@ Date:   03 December 2020
 """
 
 import currency
+
+src = input('3-letter code for original currency: ')
+dst = input('3-letter code for the new currency: ')
+amt = input('Amount of the original currency: ')
+exchange_amt = currency.exchange(src,dst,amt)
+result = round(exchange_amt,3)
+print('You can exchange ' + amt + ' ' + src + ' for ' + str(result) + ' ' +
+dst + '.')

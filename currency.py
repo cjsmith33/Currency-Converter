@@ -11,7 +11,8 @@ Date:   03 December 2020
 
 import introcs
 
-APIKEY = ''
+APIKEY = 'QjZjWypB1oOuEozUDXNxlOT6YTuMfJXOqsbfuX991H4e'
+
 
 def before_space(s):
     """
@@ -53,10 +54,12 @@ def first_inside_quotes(s):
     Parameter s: a string to search
     Precondition: s is a string with at least two (double) quote characters inside
     """
+    assert(type(s) == str)
+    count = introcs.count_str(s, '"')
+    assert(count >= 2)
     begin_str = introcs.find_str(s, '"') + 1
     end_str = introcs.find_str(s,'"',begin_str, len(s))
     result = s[begin_str:end_str]
-    print(result)
     return result
 
 
@@ -86,6 +89,7 @@ def get_src(json):
     Parameter json: a json string to parse
     Precondition: json a string provided by the web service (ONLY enforce the type)
     """
+    assert(type(json) == str)
     locate_str = introcs.find_str(json, ':', introcs.find_str(json, 'src'), len(json))
     result = first_inside_quotes(json[locate_str:len(json)])
     return result
@@ -117,6 +121,116 @@ def get_dst(json):
     Parameter json: a json string to parse
     Precondition: json a string provided by the web service (ONLY enforce the type)
     """
+    assert(type(json) == str)
     locate_str = introcs.find_str(json, ':', introcs.find_str(json, 'dst'), len(json))
     result = first_inside_quotes(json[locate_str:len(json)])
     return result
+
+
+def has_error(json):
+    """
+    Returns True if the response to a currency query encountered an error.
+
+    Given a JSON string provided by the web service, this function returns True if the
+    query failed and there is an error message. For example, if the json is
+
+    '{"success":false,"src":"","dst":"","error":"Source currency code is invalid."}'
+
+    then this function returns True (It does NOT return the error message
+    'Source currency code is invalid'). On the other hand if the json is
+
+    '{"success": true, "src": "2 United States Dollars", "dst": "1.772814 Euros", "error": ""}'
+
+    then this function returns False.
+
+    The web server does NOT specify the number of spaces after the colons. The JSON
+
+    '{"success":true, "src":"2 United States Dollars", "dst":"1.772814 Euros", "error":""}'
+
+    is also valid (in addition to the examples above).
+
+    Parameter json: a json string to parse
+    Precondition: json a string provided by the web service (ONLY enforce the type)
+    """
+    assert(type(json) == str)
+    locate_str = introcs.find_str(json, ':', introcs.find_str(json, 'error'), len(json))
+    result = introcs.capitalize(first_inside_quotes(json[locate_str:len(json)]))
+    return len(result) > 0
+
+
+def service_response(src, dst, amt):
+    """
+    Returns a JSON string that is a response to a currency query.
+
+    A currency query converts amt money in currency src to the currency dst. The response
+    should be a string of the form
+
+    '{"success": true, "src": "<src-amount>", dst: "<dst-amount>", error: ""}'
+
+    where the values src-amount and dst-amount contain the value and name for the src
+    and dst currencies, respectively. If the query is invalid, both src-amount and
+    dst-amount will be empty, and the error message will not be empty.
+
+    There may or may not be spaces after the colon.  To test this function, you should
+    chose specific examples from your web browser.
+
+    Parameter src: the currency on hand
+    Precondition src is a nonempty string with only letters
+
+    Parameter dst: the currency to convert to
+    Precondition dst is a nonempty string with only letters
+
+    Parameter amt: amount of currency to convert
+    Precondition amt is a float or int
+    """
+    assert(type(src) == str)
+    assert(introcs.isalpha(src) == True)
+    assert(type(dst) == str)
+    assert(introcs.isalpha(dst) == True)
+    #assert(introcs.isdecimal(str(amt)) == True)
+    #assert(type(amt) == float or int)
+    service_request = introcs.urlread('https://ecpyfac.ecornell.com/python/'+
+    'currency/fixed?src='+src+'&dst='+dst+'&amt='+str(amt)+'&key='+APIKEY)
+    return service_request
+
+
+def iscurrency(currency):
+    """
+    Returns True if currency is a valid (3 letter code for a) currency.
+
+    It returns False otherwise.
+
+    Parameter currency: the currency code to verify
+    Precondition: currency is a nonempty string with only letters
+    """
+    assert(introcs.isalpha(currency) == True)
+    result = service_response(currency, currency, 0.0)
+    result = has_error(result)
+    return result == False
+
+
+def exchange(src,dst,amt):
+    """
+    Returns the amount of currency received in the given exchange.
+
+    In this exchange, the user is changing amt money in currency src to the currency
+    dst. The value returned represents the amount in currency currency_to.
+
+    The value returned has type float.
+
+    Parameter src: the currency on hand
+    Precondition src is a string for a valid currency code
+
+    Parameter dst: the currency to convert to
+    Precondition dst is a string for a valid currency code
+
+    Parameter amt: amount of currency to convert
+    Precondition amt is a float or int
+    """
+    assert(iscurrency(src) == True)
+    assert(iscurrency(dst) == True)
+    #assert(type(amt) == float or int)
+    result_ser_resp = service_response(src,dst,amt)
+    result_get_dst = get_dst(result_ser_resp)
+    result = introcs.find_str(result_get_dst, ' ')
+    return float(result_get_dst[:result])
